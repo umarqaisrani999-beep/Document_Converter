@@ -9,10 +9,10 @@ from tkinter import filedialog
 
 from tools.dialogs import show_error, show_success
 from tools.word_pdf import word_to_pdf, pdf_to_word
+from tools.pdf_pptx import pdf_to_pptx
 
-
-ctk.set_appearance_mode("dark")        # "dark" or "light"
-ctk.set_default_color_theme("blue")    # base theme; sidebar uses custom colors
+ctk.set_appearance_mode("dark")        
+ctk.set_default_color_theme("blue")    
 
 
 SIDEBAR_TOOLS = [
@@ -49,7 +49,6 @@ class BaseToolFrame(ctk.CTkFrame):
         )
         desc_label.grid(row=1, column=0, sticky="w", padx=30, pady=(0, 20))
 
-        # Container for tool-specific widgets
         self.content = ctk.CTkFrame(self, corner_radius=15)
         self.content.grid(row=2, column=0, sticky="nsew", padx=30, pady=(0, 30))
         self.content.grid_columnconfigure(0, weight=1)
@@ -388,16 +387,14 @@ class PdfToWordFrame(BaseToolFrame):
 
 
 
-class PdfToPptxFrame(ComingSoonFrame):
+class PdfToPptxFrame(BaseToolFrame):
     """
     # TODO: Team Member B — implement PDF to PPTX here.
-    Suggested libraries: PyMuPDF (fitz) + python-pptx
-    Approach: render each PDF page as a high-res image, then insert each
-    image as a full-slide picture into a new PPTX file.
-    Logic should live in: tools/pdf_pptx.py -> def pdf_to_pptx(input_path, output_path, progress_cb=None)
+    ...
     """
+class PdfToPptxFrame(BaseToolFrame):
     def __init__(self, master, app):
-        super().__init__(master, app, "PDF to PPTX Converter")
+        super().__init__(master, app, "PDF to PPTX Converter", "Convert PDF presentations into editable PowerPoint slideshows.")
 
 
 class PptxToPdfFrame(ComingSoonFrame):
