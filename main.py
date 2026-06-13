@@ -18,7 +18,7 @@ ctk.set_default_color_theme("blue")
 SIDEBAR_TOOLS = [
     ("📄 Word → PDF", "word_to_pdf"),
     ("📝 PDF → Word", "pdf_to_word"),
-    ("🖼️ PDF → PPTX", "pdf_to_pptx"),
+    ("📊 PDF → PPTX", "pdf_to_pptx"),
     ("📊 PPTX → PDF", "pptx_to_pdf"),
     ("📋 Word → PPTX", "word_to_pptx"),
     ("📑 PPTX → Word", "pptx_to_word"),
@@ -388,13 +388,118 @@ class PdfToWordFrame(BaseToolFrame):
 
 
 class PdfToPptxFrame(BaseToolFrame):
-    """
-    # TODO: Team Member B — implement PDF to PPTX here.
-    ...
-    """
-class PdfToPptxFrame(BaseToolFrame):
     def __init__(self, master, app):
-        super().__init__(master, app, "PDF to PPTX Converter", "Convert PDF presentations into editable PowerPoint slideshows.")
+        super().__init__(
+            master, 
+            app, 
+            "PDF to PPTX Converter", 
+            "Convert your PDF presentations into editable PowerPoint slideshows (.pptx)."
+        )
+        self.selected_file = None
+
+        
+        self.content_container = ctk.CTkFrame(self, fg_color=("gray90", "gray16"), border_width=1, border_color=("gray80", "gray25"))
+        self.content_container.grid(row=2, column=0, padx=40, pady=20, sticky="ew")
+        self.content_container.grid_columnconfigure(0, weight=1)
+
+        
+        self.file_label = ctk.CTkLabel(
+            self.content_container, 
+            text="No file selected", 
+            font=ctk.CTkFont(size=14, slant="italic"),
+            text_color="gray50"
+        )
+        self.file_label.pack(pady=(25, 15), padx=20)
+
+        
+        self.browse_btn = ctk.CTkButton(
+            self.content_container, 
+            text="Browse PDF File", 
+            command=self._browse_file,
+            font=ctk.CTkFont(weight="bold")
+        )
+        self.browse_btn.pack(pady=(0, 25))
+
+        
+        self.progress_bar = ctk.CTkProgressBar(self, width=400)
+        self.status_label = ctk.CTkLabel(self, text="", font=ctk.CTkFont(size=12, slant="italic"), text_color="gray60")
+
+        
+        self.action_btn = ctk.CTkButton(
+            self, 
+            text="Convert to PowerPoint", 
+            state="disabled",
+            font=ctk.CTkFont(size=15, weight="bold"),
+            command=self._execute_tool
+        )
+        self.action_btn.grid(row=5, column=0, pady=30)
+
+    def _browse_file(self):
+        """Triggers file dialog window to choose a PDF file"""
+        file_path = filedialog.askopenfilename(
+            title="Select PDF Presentation",
+            filetypes=[("PDF Files", "*.pdf")]
+        )
+        if file_path:
+            self.selected_file = file_path
+            filename = os.path.basename(file_path)
+            
+            self.file_label.configure(
+                text=f"Selected: {filename}", 
+                text_color=("#1ABC9C", "#2ECC71"), 
+                font=ctk.CTkFont(size=14, weight="bold")
+            )
+            self.action_btn.configure(state="normal")
+
+    def _execute_tool(self):
+        """Triggers output destination choices and handles threading pipelines"""
+        if not self.selected_file:
+            return
+
+        output_path = filedialog.asksaveasfilename(
+            title="Save PowerPoint Presentation",
+            defaultextension=".pptx",
+            filetypes=[("PowerPoint Presentations", "*.pptx")],
+            initialfile=os.path.splitext(os.path.basename(self.selected_file))[0] + ".pptx"
+        )
+        if not output_path:
+            return
+
+        self.progress_bar.grid(row=3, column=0, pady=(10, 5))
+        self.progress_bar.set(0)
+        self.status_label.grid(row=4, column=0, pady=5)
+        
+        self.action_btn.configure(state="disabled")
+        self.browse_btn.configure(state="disabled")
+
+        threading.Thread(
+            target=self._run_conversion_worker, 
+            args=(self.selected_file, output_path), 
+            daemon=True
+        ).start()
+
+    def _run_conversion_worker(self, infile, outfile):
+        try:
+            def update_progress(pct, msg):
+                self.progress_bar.set(pct / 100.0)
+                self.status_label.configure(text=msg)
+
+            from tools.pdf_pptx import pdf_to_pptx
+            pdf_to_pptx(infile, outfile, progress_cb=update_progress)
+            
+            show_success(self.app, "Success", "Your PDF has been successfully converted into a PowerPoint file!")
+            self.file_label.configure(text="No file selected", text_color="gray50", font=ctk.CTkFont(size=14, slant="italic"))
+            self.selected_file = None
+            
+        except NotImplementedError as nie:
+            show_error(self.app, "Feature Notice", str(nie))
+        except Exception as e:
+            traceback.print_exc()
+            show_error(self.app, "Conversion Error", f"An unexpected error occurred:\n{str(e)}")
+        finally:
+            self.progress_bar.grid_forget()
+            self.status_label.grid_forget()
+            self.browse_btn.configure(state="normal")
 
 
 class PptxToPdfFrame(ComingSoonFrame):
@@ -509,18 +614,24 @@ class App(ctk.CTk):
         subtitle_label.grid(row=1, column=0, padx=20, pady=(0, 20), sticky="w")
 
         self.nav_buttons = {}
-        for i, (label, key) in enumerate(SIDEBAR_TOOLS, start=2):
+        
+        for idx, (text, key) in enumerate( SIDEBAR_TOOLS):
             btn = ctk.CTkButton(
-                self.sidebar, text=label, anchor="w", height=40,
-                fg_color="transparent", text_color=("gray10", "gray90"),
-                hover_color=("gray80", "gray25"),
-                font=ctk.CTkFont(size=14),
+                self.sidebar, 
+                text=text,
+                font=ctk.CTkFont(size=13, weight="bold"),
+                height=40,
+                corner_radius=8,
+                fg_color="transparent",
+                text_color=("gray10", "gray90"),
+                hover_color=("gray70", "gray30"),
+                anchor="w",  
                 command=lambda k=key: self.show_frame(k)
             )
-            btn.grid(row=i, column=0, padx=15, pady=4, sticky="ew")
+            btn.grid(row=idx + 1, column=0, padx=10, pady=5, sticky="ew")
             self.nav_buttons[key] = btn
 
-        # Appearance mode switch at the bottom of the sidebar
+     
         appearance_row = len(SIDEBAR_TOOLS) + 3
         self.appearance_switch = ctk.CTkSegmentedButton(
             self.sidebar, values=["Light", "Dark"],
