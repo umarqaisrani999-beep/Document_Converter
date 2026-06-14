@@ -1938,6 +1938,7 @@ class App(ctk.CTk):
         self.geometry("1100x680")
         self.minsize(900, 600)
 
+        # Single window full-width grid layout
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
@@ -1946,9 +1947,8 @@ class App(ctk.CTk):
         self.main_area.grid_columnconfigure(0, weight=1)
         self.main_area.grid_rowconfigure(0, weight=1)
 
-        self.frames = {}
-
-        frame_classes = {
+        # Store the class blueprints instead of instantiating them immediately
+        self.frame_classes = {
             "word_to_pdf": WordToPdfFrame,
             "pdf_to_word": PdfToWordFrame,
             "pdf_to_pptx": PdfToPptxFrame,
@@ -1961,24 +1961,29 @@ class App(ctk.CTk):
             "image_compressor": ImageCompressorFrame,
         }
 
-        for key, frame_cls in frame_classes.items():
-            frame = frame_cls(self.main_area, self)
-            frame.grid(row=0, column=0, sticky="nsew")
-            self.frames[key] = frame
+        # Cache for active, initialized frames
+        self.frames = {}
 
-        # Load home frame cleanly as our primary entry screen layout
+        # Load ONLY the home dashboard frame on initial startup
         home = HomeDashboardFrame(self.main_area, self)
         home.grid(row=0, column=0, sticky="nsew")
         self.frames["home"] = home
+        
         self.show_frame("home")
 
-    
     def show_frame(self, key):
-        """Raise the requested tool frame natively within the main window stack."""
+        """Raise the requested tool frame, initializing it lazily only when needed."""
         frame = self.frames.get(key)
-        if frame is None:
-            return
-        frame.tkraise()
+        
+        # If the tool hasn't been opened yet during this session, build it now
+        if frame is None and key in self.frame_classes:
+            frame_cls = self.frame_classes[key]
+            frame = frame_cls(self.main_area, self)
+            frame.grid(row=0, column=0, sticky="nsew")
+            self.frames[key] = frame
+            
+        if frame:
+            frame.tkraise()
 
     def _on_appearance_change(self, value):
         ctk.set_appearance_mode(value.lower())
