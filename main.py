@@ -1536,30 +1536,328 @@ class TextEditorFrame(BaseToolFrame):
         self._on_text_modified()
 
 
-class FileCompressorFrame(ComingSoonFrame):
-    """
-    # TODO: Team Member H — implement File Compressor here.
-    Suggested libraries: zipfile, zlib (both in Python standard library).
-    Logic should live in: tools/file_compressor.py
-        -> def compress_files(file_paths: list[str], output_zip_path: str, progress_cb=None)
-    UI should allow selecting MULTIPLE files (filedialog.askopenfilenames)
-    and bundling them into a single .zip archive.
-    """
+class FileCompressorFrame(BaseToolFrame):
+    """Compress multiple files into a single .zip archive."""
+
     def __init__(self, master, app):
-        super().__init__(master, app, "File Compressor")
+        super().__init__(
+            master, app, "File Compressor",
+            "Select multiple files and compress them into a single .zip archive."
+        )
+
+        self.selected_files = []
+        self.output_path = None
+
+        self.content.grid_rowconfigure(4, weight=1)
+
+        # --- File list label ---
+        ctk.CTkLabel(
+            self.content, text="1. Select Files to Compress",
+            font=ctk.CTkFont(size=14, weight="bold")
+        ).grid(row=0, column=0, sticky="w", padx=20, pady=(20, 5))
+
+        file_row = ctk.CTkFrame(self.content, fg_color="transparent")
+        file_row.grid(row=1, column=0, sticky="ew", padx=20)
+        file_row.grid_columnconfigure(0, weight=1)
+
+        self.files_entry = ctk.CTkEntry(
+            file_row, placeholder_text="No files selected...", state="readonly"
+        )
+        self.files_entry.grid(row=0, column=0, sticky="ew", padx=(0, 10))
+
+        ctk.CTkButton(
+            file_row, text="Browse", width=100, command=self.browse_files
+        ).grid(row=0, column=1)
+
+        # --- Output zip location ---
+        ctk.CTkLabel(
+            self.content, text="2. Choose Output .zip Location",
+            font=ctk.CTkFont(size=14, weight="bold")
+        ).grid(row=2, column=0, sticky="w", padx=20, pady=(20, 5))
+
+        output_row = ctk.CTkFrame(self.content, fg_color="transparent")
+        output_row.grid(row=3, column=0, sticky="ew", padx=20)
+        output_row.grid_columnconfigure(0, weight=1)
+
+        self.output_entry = ctk.CTkEntry(
+            output_row, placeholder_text="Output .zip path...", state="readonly"
+        )
+        self.output_entry.grid(row=0, column=0, sticky="ew", padx=(0, 10))
+
+        ctk.CTkButton(
+            output_row, text="Browse", width=100, command=self.browse_output
+        ).grid(row=0, column=1)
+
+        # --- Action area ---
+        action_area = ctk.CTkFrame(self.content, fg_color="transparent")
+        action_area.grid(row=4, column=0, sticky="sew", padx=20, pady=20)
+        action_area.grid_columnconfigure(0, weight=1)
+
+        self.compress_btn = ctk.CTkButton(
+            action_area, text="Compress Files", height=45,
+            font=ctk.CTkFont(size=15, weight="bold"),
+            command=self.start_compression
+        )
+        self.compress_btn.grid(row=0, column=0, sticky="ew", pady=(0, 15))
+
+        self.progress_bar = ctk.CTkProgressBar(action_area)
+        self.progress_bar.grid(row=1, column=0, sticky="ew", pady=(0, 8))
+        self.progress_bar.set(0)
+
+        self.status_label = ctk.CTkLabel(
+            action_area, text="Ready.", font=ctk.CTkFont(size=12),
+            text_color=("gray30", "gray70")
+        )
+        self.status_label.grid(row=2, column=0, sticky="w")
+
+    def browse_files(self):
+        paths = filedialog.askopenfilenames(title="Select Files to Compress")
+        if paths:
+            self.selected_files = list(paths)
+            display = f"{len(paths)} file(s) selected"
+            self._set_entry(self.files_entry, display)
+
+    def browse_output(self):
+        path = filedialog.asksaveasfilename(
+            title="Save ZIP As", defaultextension=".zip",
+            filetypes=[("ZIP Archive", "*.zip")]
+        )
+        if path:
+            self.output_path = path
+            self._set_entry(self.output_entry, path)
+
+    def _set_entry(self, entry, text):
+        entry.configure(state="normal")
+        entry.delete(0, "end")
+        entry.insert(0, text)
+        entry.configure(state="readonly")
+
+    def start_compression(self):
+        if not self.selected_files:
+            show_error(self.app, "No Files", "Please select at least one file.")
+            return
+        if not self.output_path:
+            show_error(self.app, "No Output", "Please choose where to save the .zip file.")
+            return
+        self._set_busy(True, "Compressing...")
+        threading.Thread(target=self._run, daemon=True).start()
+
+    def _run(self):
+        try:
+            from tools.file_compressor import compress_files
+
+            def cb(pct, msg):
+                self.app.after(0, lambda: (
+                    self.progress_bar.set(pct / 100),
+                    self.status_label.configure(text=msg)
+                ))
+
+            compress_files(self.selected_files, self.output_path, progress_cb=cb)
+            self.app.after(0, self._on_success)
+        except Exception:
+            err = traceback.format_exc(limit=3)
+            self.app.after(0, lambda: self._on_failure(err))
+
+    def _on_success(self):
+        self._set_busy(False, "Done!")
+        show_success(self.app, "Success", f"ZIP saved to:\n{self.output_path}")
+
+    def _on_failure(self, err):
+        self._set_busy(False, "Failed.")
+        show_error(self.app, "Compression Failed", err)
+
+    def _set_busy(self, busy, msg):
+        if busy:
+            self.compress_btn.configure(state="disabled", text="Compressing...")
+        else:
+            self.compress_btn.configure(state="normal", text="Compress Files")
+        self.status_label.configure(text=msg)
 
 
-class ImageCompressorFrame(ComingSoonFrame):
-    """
-    # TODO: Team Member I — implement Image Compressor here.
-    Suggested library: Pillow (PIL) — use Image.save() with `quality=` and/or
-    `Image.resize()` for downscaling, and `optimize=True` for memory savings.
-    Logic should live in: tools/image_compressor.py
-        -> def compress_image(input_path, output_path, quality=70, max_dimension=None, progress_cb=None)
-    UI should include a quality slider (CTkSlider) and optional resize inputs.
-    """
+class ImageCompressorFrame(BaseToolFrame):
+    """Compress images by reducing quality and optionally resizing."""
+
+    _IMAGE_TYPES = [
+        ("Image Files", "*.png *.jpg *.jpeg *.bmp *.webp"),
+        ("All Files", "*.*"),
+    ]
+
     def __init__(self, master, app):
-        super().__init__(master, app, "Image Compressor")
+        super().__init__(
+            master, app, "Image Compressor",
+            "Reduce image file size by adjusting quality and optionally resizing."
+        )
+
+        self.input_path = None
+        self.output_path = None
+
+        self.content.grid_rowconfigure(6, weight=1)
+
+        # --- Input ---
+        ctk.CTkLabel(
+            self.content, text="1. Select Image",
+            font=ctk.CTkFont(size=14, weight="bold")
+        ).grid(row=0, column=0, sticky="w", padx=20, pady=(20, 5))
+
+        in_row = ctk.CTkFrame(self.content, fg_color="transparent")
+        in_row.grid(row=1, column=0, sticky="ew", padx=20)
+        in_row.grid_columnconfigure(0, weight=1)
+
+        self.input_entry = ctk.CTkEntry(
+            in_row, placeholder_text="No image selected...", state="readonly"
+        )
+        self.input_entry.grid(row=0, column=0, sticky="ew", padx=(0, 10))
+
+        ctk.CTkButton(
+            in_row, text="Browse", width=100, command=self.browse_input
+        ).grid(row=0, column=1)
+
+        # --- Output ---
+        ctk.CTkLabel(
+            self.content, text="2. Choose Output Location",
+            font=ctk.CTkFont(size=14, weight="bold")
+        ).grid(row=2, column=0, sticky="w", padx=20, pady=(20, 5))
+
+        out_row = ctk.CTkFrame(self.content, fg_color="transparent")
+        out_row.grid(row=3, column=0, sticky="ew", padx=20)
+        out_row.grid_columnconfigure(0, weight=1)
+
+        self.output_entry = ctk.CTkEntry(
+            out_row, placeholder_text="Output image path...", state="readonly"
+        )
+        self.output_entry.grid(row=0, column=0, sticky="ew", padx=(0, 10))
+
+        ctk.CTkButton(
+            out_row, text="Browse", width=100, command=self.browse_output
+        ).grid(row=0, column=1)
+
+        # --- Quality slider ---
+        ctk.CTkLabel(
+            self.content, text="3. JPEG Quality (ignored for PNG)",
+            font=ctk.CTkFont(size=14, weight="bold")
+        ).grid(row=4, column=0, sticky="w", padx=20, pady=(20, 5))
+
+        slider_row = ctk.CTkFrame(self.content, fg_color="transparent")
+        slider_row.grid(row=5, column=0, sticky="ew", padx=20, pady=(0, 10))
+
+        self.quality_label = ctk.CTkLabel(slider_row, text="Quality: 70", width=90)
+        self.quality_label.pack(side="left", padx=(0, 10))
+
+        self.quality_slider = ctk.CTkSlider(
+            slider_row, from_=10, to=95, number_of_steps=85,
+            command=self._on_quality_change
+        )
+        self.quality_slider.set(70)
+        self.quality_slider.pack(side="left", fill="x", expand=True)
+
+        # --- Max dimension ---
+        dim_row = ctk.CTkFrame(self.content, fg_color="transparent")
+        dim_row.grid(row=6, column=0, sticky="ew", padx=20, pady=(0, 10))
+
+        ctk.CTkLabel(
+            dim_row, text="Max Dimension (px, blank = no resize):",
+            font=ctk.CTkFont(size=13)
+        ).pack(side="left", padx=(0, 10))
+
+        self.dim_entry = ctk.CTkEntry(dim_row, placeholder_text="e.g. 1920", width=120)
+        self.dim_entry.pack(side="left")
+
+        # --- Action area ---
+        action_area = ctk.CTkFrame(self.content, fg_color="transparent")
+        action_area.grid(row=7, column=0, sticky="sew", padx=20, pady=20)
+        action_area.grid_columnconfigure(0, weight=1)
+
+        self.compress_btn = ctk.CTkButton(
+            action_area, text="Compress Image", height=45,
+            font=ctk.CTkFont(size=15, weight="bold"),
+            command=self.start_compression
+        )
+        self.compress_btn.grid(row=0, column=0, sticky="ew", pady=(0, 15))
+
+        self.progress_bar = ctk.CTkProgressBar(action_area)
+        self.progress_bar.grid(row=1, column=0, sticky="ew", pady=(0, 8))
+        self.progress_bar.set(0)
+
+        self.status_label = ctk.CTkLabel(
+            action_area, text="Ready.", font=ctk.CTkFont(size=12),
+            text_color=("gray30", "gray70")
+        )
+        self.status_label.grid(row=2, column=0, sticky="w")
+
+    def _on_quality_change(self, val):
+        self.quality_label.configure(text=f"Quality: {int(val)}")
+
+    def browse_input(self):
+        path = filedialog.askopenfilename(
+            title="Select Image", filetypes=self._IMAGE_TYPES
+        )
+        if path:
+            self.input_path = path
+            self._set_entry(self.input_entry, path)
+            base, ext = os.path.splitext(path)
+            self.output_path = base + "_compressed" + ext
+            self._set_entry(self.output_entry, self.output_path)
+
+    def browse_output(self):
+        path = filedialog.asksaveasfilename(
+            title="Save Compressed Image As",
+            filetypes=self._IMAGE_TYPES
+        )
+        if path:
+            self.output_path = path
+            self._set_entry(self.output_entry, path)
+
+    def _set_entry(self, entry, text):
+        entry.configure(state="normal")
+        entry.delete(0, "end")
+        entry.insert(0, text)
+        entry.configure(state="readonly")
+
+    def start_compression(self):
+        if not self.input_path or not os.path.exists(self.input_path):
+            show_error(self.app, "No Input", "Please select a valid image file.")
+            return
+        if not self.output_path:
+            show_error(self.app, "No Output", "Please choose where to save the output.")
+            return
+        self._set_busy(True, "Compressing...")
+        threading.Thread(target=self._run, daemon=True).start()
+
+    def _run(self):
+        try:
+            from tools.image_compressor import compress_image
+
+            quality = int(self.quality_slider.get())
+            dim_text = self.dim_entry.get().strip()
+            max_dim = int(dim_text) if dim_text.isdigit() else None
+
+            def cb(pct, msg):
+                self.app.after(0, lambda: (
+                    self.progress_bar.set(pct / 100),
+                    self.status_label.configure(text=msg)
+                ))
+
+            compress_image(self.input_path, self.output_path,
+                           quality=quality, max_dimension=max_dim, progress_cb=cb)
+            self.app.after(0, self._on_success)
+        except Exception:
+            err = traceback.format_exc(limit=3)
+            self.app.after(0, lambda: self._on_failure(err))
+
+    def _on_success(self):
+        self._set_busy(False, "Done!")
+        show_success(self.app, "Success", f"Compressed image saved to:\n{self.output_path}")
+
+    def _on_failure(self, err):
+        self._set_busy(False, "Failed.")
+        show_error(self.app, "Compression Failed", err)
+
+    def _set_busy(self, busy, msg):
+        if busy:
+            self.compress_btn.configure(state="disabled", text="Compressing...")
+        else:
+            self.compress_btn.configure(state="normal", text="Compress Image")
+        self.status_label.configure(text=msg)
 
 
 
