@@ -10,6 +10,8 @@ from tkinter import filedialog
 from tools.dialogs import show_error, show_success
 from tools.word_pdf import word_to_pdf, pdf_to_word
 from tools.pdf_pptx import pdf_to_pptx
+from tools.word_pptx import word_to_pptx
+from tools.pptx_word import pptx_to_word
 
 ctk.set_appearance_mode("dark")        
 ctk.set_default_color_theme("blue")    
@@ -645,26 +647,288 @@ class PptxToPdfFrame(BaseToolFrame):
         self.status_label.configure(text=status_text)
 
 
-class WordToPptxFrame(ComingSoonFrame):
-    """
-    # TODO: Team Member D — implement Word to PPTX here.
-    Suggested libraries: python-docx (extract text/headings) + python-pptx
-    (build slides from extracted structure).
-    Logic should live in: tools/word_pptx.py -> def word_to_pptx(input_path, output_path, progress_cb=None)
-    """
+class WordToPptxFrame(BaseToolFrame):
+    """Word to PPTX — convert a Word document into a PowerPoint presentation."""
+
     def __init__(self, master, app):
-        super().__init__(master, app, "Word to PPTX Converter")
+        super().__init__(
+            master, app, "Word to PPTX Converter",
+            "Convert Word (.docx) documents into editable PowerPoint (.pptx) presentations."
+        )
+
+        self.input_path = None
+        self.output_path = None
+
+        self.content.grid_rowconfigure(4, weight=1)
+
+        # --- Input file selection ---
+        ctk.CTkLabel(
+            self.content, text="1. Select Word Document (.docx)",
+            font=ctk.CTkFont(size=14, weight="bold")
+        ).grid(row=0, column=0, sticky="w", padx=20, pady=(20, 5))
+
+        input_row = ctk.CTkFrame(self.content, fg_color="transparent")
+        input_row.grid(row=1, column=0, sticky="ew", padx=20)
+        input_row.grid_columnconfigure(0, weight=1)
+
+        self.input_entry = ctk.CTkEntry(
+            input_row, placeholder_text="No file selected...", state="readonly"
+        )
+        self.input_entry.grid(row=0, column=0, sticky="ew", padx=(0, 10))
+
+        ctk.CTkButton(
+            input_row, text="Browse", width=100, command=self.browse_input
+        ).grid(row=0, column=1)
+
+        # --- Output file selection ---
+        ctk.CTkLabel(
+            self.content, text="2. Choose Output Location",
+            font=ctk.CTkFont(size=14, weight="bold")
+        ).grid(row=2, column=0, sticky="w", padx=20, pady=(20, 5))
+
+        output_row = ctk.CTkFrame(self.content, fg_color="transparent")
+        output_row.grid(row=3, column=0, sticky="ew", padx=20)
+        output_row.grid_columnconfigure(0, weight=1)
+
+        self.output_entry = ctk.CTkEntry(
+            output_row, placeholder_text="Output PPTX path...", state="readonly"
+        )
+        self.output_entry.grid(row=0, column=0, sticky="ew", padx=(0, 10))
+
+        ctk.CTkButton(
+            output_row, text="Browse", width=100, command=self.browse_output
+        ).grid(row=0, column=1)
+
+        # --- Action area ---
+        action_area = ctk.CTkFrame(self.content, fg_color="transparent")
+        action_area.grid(row=4, column=0, sticky="sew", padx=20, pady=20)
+        action_area.grid_columnconfigure(0, weight=1)
+
+        self.convert_btn = ctk.CTkButton(
+            action_area, text="Convert to PPTX", height=45,
+            font=ctk.CTkFont(size=15, weight="bold"),
+            command=self.start_conversion
+        )
+        self.convert_btn.grid(row=0, column=0, sticky="ew", pady=(0, 15))
+
+        self.progress_bar = ctk.CTkProgressBar(action_area, mode="indeterminate")
+        self.progress_bar.grid(row=1, column=0, sticky="ew", pady=(0, 8))
+        self.progress_bar.set(0)
+
+        self.status_label = ctk.CTkLabel(
+            action_area, text="Ready.", font=ctk.CTkFont(size=12),
+            text_color=("gray30", "gray70")
+        )
+        self.status_label.grid(row=2, column=0, sticky="w")
+
+    def browse_input(self):
+        path = filedialog.askopenfilename(
+            title="Select Word Document",
+            filetypes=[("Word Documents", "*.docx"), ("All Files", "*.*")]
+        )
+        if path:
+            self.input_path = path
+            self._set_entry(self.input_entry, path)
+            base, _ = os.path.splitext(path)
+            self.output_path = base + ".pptx"
+            self._set_entry(self.output_entry, self.output_path)
+
+    def browse_output(self):
+        path = filedialog.asksaveasfilename(
+            title="Save PowerPoint Presentation As",
+            defaultextension=".pptx",
+            filetypes=[("PowerPoint Presentations", "*.pptx")]
+        )
+        if path:
+            self.output_path = path
+            self._set_entry(self.output_entry, path)
+
+    def _set_entry(self, entry, text):
+        entry.configure(state="normal")
+        entry.delete(0, "end")
+        entry.insert(0, text)
+        entry.configure(state="readonly")
+
+    def start_conversion(self):
+        if not self.input_path or not os.path.exists(self.input_path):
+            show_error(self.app, "Missing Input", "Please select a valid .docx file first.")
+            return
+        if not self.output_path:
+            show_error(self.app, "Missing Output", "Please choose where to save the PPTX.")
+            return
+        self._set_busy(True, "Converting... please wait.")
+        threading.Thread(target=self._run_conversion, daemon=True).start()
+
+    def _run_conversion(self):
+        try:
+            def progress_cb(pct, msg):
+                self.app.after(0, lambda: self.status_label.configure(text=msg))
+
+            word_to_pptx(self.input_path, self.output_path, progress_cb=progress_cb)
+            self.app.after(0, self._on_success)
+        except Exception:
+            err_text = traceback.format_exc(limit=3)
+            self.app.after(0, lambda: self._on_failure(err_text))
+
+    def _on_success(self):
+        self._set_busy(False, "Done!")
+        show_success(self.app, "Success", f"PowerPoint saved to:\n{self.output_path}")
+
+    def _on_failure(self, err_text):
+        self._set_busy(False, "Failed.")
+        show_error(self.app, "Conversion Failed", err_text)
+
+    def _set_busy(self, busy, status_text):
+        if busy:
+            self.convert_btn.configure(state="disabled", text="Converting...")
+            self.progress_bar.start()
+        else:
+            self.convert_btn.configure(state="normal", text="Convert to PPTX")
+            self.progress_bar.stop()
+            self.progress_bar.set(0)
+        self.status_label.configure(text=status_text)
 
 
-class PptxToWordFrame(ComingSoonFrame):
-    """
-    # TODO: Team Member E — implement PPTX to Word here.
-    Suggested libraries: python-pptx (extract slide text/notes) + python-docx
-    (append extracted content as headings/paragraphs).
-    Logic should live in: tools/pptx_word.py -> def pptx_to_word(input_path, output_path, progress_cb=None)
-    """
+class PptxToWordFrame(BaseToolFrame):
+    """PPTX to Word — convert a PowerPoint presentation into a Word document."""
+
     def __init__(self, master, app):
-        super().__init__(master, app, "PPTX to Word Converter")
+        super().__init__(
+            master, app, "PPTX to Word Converter",
+            "Convert PowerPoint (.pptx) presentations into editable Word (.docx) documents."
+        )
+
+        self.input_path = None
+        self.output_path = None
+
+        self.content.grid_rowconfigure(4, weight=1)
+
+        # --- Input file selection ---
+        ctk.CTkLabel(
+            self.content, text="1. Select PowerPoint File (.pptx)",
+            font=ctk.CTkFont(size=14, weight="bold")
+        ).grid(row=0, column=0, sticky="w", padx=20, pady=(20, 5))
+
+        input_row = ctk.CTkFrame(self.content, fg_color="transparent")
+        input_row.grid(row=1, column=0, sticky="ew", padx=20)
+        input_row.grid_columnconfigure(0, weight=1)
+
+        self.input_entry = ctk.CTkEntry(
+            input_row, placeholder_text="No file selected...", state="readonly"
+        )
+        self.input_entry.grid(row=0, column=0, sticky="ew", padx=(0, 10))
+
+        ctk.CTkButton(
+            input_row, text="Browse", width=100, command=self.browse_input
+        ).grid(row=0, column=1)
+
+        # --- Output file selection ---
+        ctk.CTkLabel(
+            self.content, text="2. Choose Output Location",
+            font=ctk.CTkFont(size=14, weight="bold")
+        ).grid(row=2, column=0, sticky="w", padx=20, pady=(20, 5))
+
+        output_row = ctk.CTkFrame(self.content, fg_color="transparent")
+        output_row.grid(row=3, column=0, sticky="ew", padx=20)
+        output_row.grid_columnconfigure(0, weight=1)
+
+        self.output_entry = ctk.CTkEntry(
+            output_row, placeholder_text="Output DOCX path...", state="readonly"
+        )
+        self.output_entry.grid(row=0, column=0, sticky="ew", padx=(0, 10))
+
+        ctk.CTkButton(
+            output_row, text="Browse", width=100, command=self.browse_output
+        ).grid(row=0, column=1)
+
+        # --- Action area ---
+        action_area = ctk.CTkFrame(self.content, fg_color="transparent")
+        action_area.grid(row=4, column=0, sticky="sew", padx=20, pady=20)
+        action_area.grid_columnconfigure(0, weight=1)
+
+        self.convert_btn = ctk.CTkButton(
+            action_area, text="Convert to Word", height=45,
+            font=ctk.CTkFont(size=15, weight="bold"),
+            command=self.start_conversion
+        )
+        self.convert_btn.grid(row=0, column=0, sticky="ew", pady=(0, 15))
+
+        self.progress_bar = ctk.CTkProgressBar(action_area, mode="indeterminate")
+        self.progress_bar.grid(row=1, column=0, sticky="ew", pady=(0, 8))
+        self.progress_bar.set(0)
+
+        self.status_label = ctk.CTkLabel(
+            action_area, text="Ready.", font=ctk.CTkFont(size=12),
+            text_color=("gray30", "gray70")
+        )
+        self.status_label.grid(row=2, column=0, sticky="w")
+
+    def browse_input(self):
+        path = filedialog.askopenfilename(
+            title="Select PowerPoint File",
+            filetypes=[("PowerPoint Files", "*.pptx"), ("All Files", "*.*")]
+        )
+        if path:
+            self.input_path = path
+            self._set_entry(self.input_entry, path)
+            base, _ = os.path.splitext(path)
+            self.output_path = base + ".docx"
+            self._set_entry(self.output_entry, self.output_path)
+
+    def browse_output(self):
+        path = filedialog.asksaveasfilename(
+            title="Save Word Document As",
+            defaultextension=".docx",
+            filetypes=[("Word Documents", "*.docx")]
+        )
+        if path:
+            self.output_path = path
+            self._set_entry(self.output_entry, path)
+
+    def _set_entry(self, entry, text):
+        entry.configure(state="normal")
+        entry.delete(0, "end")
+        entry.insert(0, text)
+        entry.configure(state="readonly")
+
+    def start_conversion(self):
+        if not self.input_path or not os.path.exists(self.input_path):
+            show_error(self.app, "Missing Input", "Please select a valid .pptx file first.")
+            return
+        if not self.output_path:
+            show_error(self.app, "Missing Output", "Please choose where to save the Word document.")
+            return
+        self._set_busy(True, "Converting... please wait.")
+        threading.Thread(target=self._run_conversion, daemon=True).start()
+
+    def _run_conversion(self):
+        try:
+            def progress_cb(pct, msg):
+                self.app.after(0, lambda: self.status_label.configure(text=msg))
+
+            pptx_to_word(self.input_path, self.output_path, progress_cb=progress_cb)
+            self.app.after(0, self._on_success)
+        except Exception:
+            err_text = traceback.format_exc(limit=3)
+            self.app.after(0, lambda: self._on_failure(err_text))
+
+    def _on_success(self):
+        self._set_busy(False, "Done!")
+        show_success(self.app, "Success", f"Word document saved to:\n{self.output_path}")
+
+    def _on_failure(self, err_text):
+        self._set_busy(False, "Failed.")
+        show_error(self.app, "Conversion Failed", err_text)
+
+    def _set_busy(self, busy, status_text):
+        if busy:
+            self.convert_btn.configure(state="disabled", text="Converting...")
+            self.progress_bar.start()
+        else:
+            self.convert_btn.configure(state="normal", text="Convert to Word")
+            self.progress_bar.stop()
+            self.progress_bar.set(0)
+        self.status_label.configure(text=status_text)
 
 
 class OcrImageTextFrame(ComingSoonFrame):
