@@ -278,12 +278,4 @@ All tool functions accept an optional `progress_cb(pct: int, msg: str)` callback
 | [#4](https://github.com/your-username/docuverse/issues/4) | Progress bar not resetting after failed conversion | ✅ Closed |
 | [#5](https://github.com/your-username/docuverse/issues/5) | Add Home Dashboard screen with card grid | ✅ Closed |
 
----
-
-## License
-
-This project was developed as part of an **Open Source Software Development** course project at **UMT (University of Management and Technology)**, Semester 4.
-
----
-
 <p align="center">Made with ❤️ by the DocuVerse Team · UMT OSSID Project 2026</p>
