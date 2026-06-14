@@ -42,10 +42,22 @@ class BaseToolFrame(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(2, weight=1)
 
-        title_label = ctk.CTkLabel(
-            self, text=title, font=ctk.CTkFont(size=26, weight="bold")
+        # Header bar to house both the back navigation and the title frame safely
+        header_bar = ctk.CTkFrame(self, fg_color="transparent")
+        header_bar.grid(row=0, column=0, sticky="w", padx=30, pady=(30, 5))
+        
+        back_btn = ctk.CTkButton(
+            header_bar, text="⬅ Back to Dashboard", width=140, height=30,
+            font=ctk.CTkFont(size=12, weight="bold"),
+            fg_color=("gray75", "gray25"), hover_color=("gray65", "gray35"),
+            command=lambda: self.app.show_frame("home")
         )
-        title_label.grid(row=0, column=0, sticky="w", padx=30, pady=(30, 5))
+        back_btn.pack(side="left", padx=(0, 15))
+
+        title_label = ctk.CTkLabel(
+            header_bar, text=title, font=ctk.CTkFont(size=26, weight="bold")
+        )
+        title_label.pack(side="left")
 
         desc_label = ctk.CTkLabel(
             self, text=description, font=ctk.CTkFont(size=14),
@@ -59,34 +71,91 @@ class BaseToolFrame(ctk.CTkFrame):
 
 
 
-class ComingSoonFrame(BaseToolFrame):
-   
+class HomeDashboardFrame(ctk.CTkFrame):
+    """Landing screen showing all tools as clickable cards."""
 
-    def __init__(self, master, app, title):
-        super().__init__(
-            master, app, title,
-            "This feature is under development by another team member."
+    TOOL_CARDS = [
+        ("📄", "Word → PDF",       "Convert Word documents\nto PDF format.",          "word_to_pdf"),
+        ("📝", "PDF → Word",       "Convert PDF files into\neditable Word documents.", "pdf_to_word"),
+        ("📊", "PDF → PPTX",       "Turn PDF pages into\nPowerPoint slides.",          "pdf_to_pptx"),
+        ("📊", "PPTX → PDF",       "Export presentations\nas PDF files.",              "pptx_to_pdf"),
+        ("📋", "Word → PPTX",      "Convert Word documents\nto presentations.",         "word_to_pptx"),
+        ("📑", "PPTX → Word",      "Extract content from\nslides into Word.",           "pptx_to_word"),
+        ("🔍", "OCR: Image→Text",  "Extract text from any\nimage using AI-OCR.",       "ocr_image_text"),
+        ("✨", "Text Editor",       "Edit and style text\nwith live formatting.",        "text_editor"),
+        ("🗜️", "File Compressor",  "Compress multiple files\ninto a .zip archive.",     "file_compressor"),
+        ("🖼️", "Image Compressor", "Reduce image file size\nwith quality control.",    "image_compressor"),
+    ]
+
+    def __init__(self, master, app):
+        super().__init__(master, fg_color="transparent")
+        self.app = app
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+
+        # Header
+        header = ctk.CTkFrame(self, fg_color="transparent")
+        header.grid(row=0, column=0, sticky="ew", padx=40, pady=(35, 20))
+        
+        title_frame = ctk.CTkFrame(header, fg_color="transparent")
+        title_frame.pack(side="left", fill="y")
+
+        ctk.CTkLabel(
+            title_frame, text="📚 DocuVerse",
+            font=ctk.CTkFont(size=32, weight="bold")
+        ).pack(anchor="w")
+
+        ctk.CTkLabel(
+            title_frame, text="Select a tool to get started",
+            font=ctk.CTkFont(size=15),
+            text_color=("gray40", "gray60")
+        ).pack(anchor="w", pady=(4, 0))
+
+        appearance_switch = ctk.CTkSegmentedButton(
+            header, values=["Light", "Dark"],
+            command=self.app._on_appearance_change
         )
+        appearance_switch.set(ctk.get_appearance_mode().capitalize())
+        appearance_switch.pack(side="right", anchor="n", pady=5)
 
-        self.content.grid_rowconfigure(0, weight=1)
+        
+        scroll = ctk.CTkScrollableFrame(self, fg_color="transparent")
+        scroll.grid(row=1, column=0, sticky="nsew", padx=30, pady=(0, 20))
 
-        wrapper = ctk.CTkFrame(self.content, fg_color="transparent")
-        wrapper.grid(row=0, column=0)
-        wrapper.place(relx=0.5, rely=0.5, anchor="center")
+        cols = 4
+        for i, (icon, name, desc, key) in enumerate(self.TOOL_CARDS):
+            row, col = divmod(i, cols)
+            card = ctk.CTkFrame(scroll, corner_radius=14, border_width=1,
+                                border_color=("gray80", "gray28"))
+            card.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
+            scroll.grid_columnconfigure(col, weight=1)
 
-        ctk.CTkLabel(
-            wrapper, text="🚧", font=ctk.CTkFont(size=60)
-        ).pack(pady=(0, 10))
+            # Icon
+            ctk.CTkLabel(
+                card, text=icon, font=ctk.CTkFont(size=36)
+            ).pack(pady=(18, 6))
 
-        ctk.CTkLabel(
-            wrapper, text="Feature Coming Soon",
-            font=ctk.CTkFont(size=20, weight="bold")
-        ).pack()
+            # Tool name
+            ctk.CTkLabel(
+                card, text=name,
+                font=ctk.CTkFont(size=14, weight="bold")
+            ).pack()
 
-        ctk.CTkLabel(
-            wrapper, text="Under Development — check back after the next sprint!",
-            font=ctk.CTkFont(size=13), text_color=("gray30", "gray70")
-        ).pack(pady=(5, 0))
+            # Description
+            ctk.CTkLabel(
+                card, text=desc,
+                font=ctk.CTkFont(size=12),
+                text_color=("gray40", "gray60"),
+                justify="center"
+            ).pack(pady=(4, 10))
+
+
+            ctk.CTkButton(
+                card, text="Open Tool", height=32,
+                font=ctk.CTkFont(size=12, weight="bold"),
+                corner_radius=8,
+                command=lambda k=key: self.app.show_frame(k)
+            ).pack(pady=(0, 16))
 
 
 
@@ -1869,61 +1938,14 @@ class App(ctk.CTk):
         self.geometry("1100x680")
         self.minsize(900, 600)
 
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        
-        self.sidebar = ctk.CTkFrame(self, width=240, corner_radius=0)
-        self.sidebar.grid(row=0, column=0, sticky="nsew")
-        self.sidebar.grid_rowconfigure(len(SIDEBAR_TOOLS) + 2, weight=1)
-
-        logo_label = ctk.CTkLabel(
-            self.sidebar, text="📚 DocuVerse",
-            font=ctk.CTkFont(size=22, weight="bold")
-        )
-        logo_label.grid(row=0, column=0, padx=20, pady=(25, 5), sticky="w")
-
-        subtitle_label = ctk.CTkLabel(
-            self.sidebar, text="Ultimate Document Toolkit",
-            font=ctk.CTkFont(size=12), text_color=("gray30", "gray70")
-        )
-        subtitle_label.grid(row=1, column=0, padx=20, pady=(0, 20), sticky="w")
-
-        self.nav_buttons = {}
-        
-        for idx, (text, key) in enumerate( SIDEBAR_TOOLS):
-            btn = ctk.CTkButton(
-                self.sidebar, 
-                text=text,
-                font=ctk.CTkFont(size=13, weight="bold"),
-                height=40,
-                corner_radius=8,
-                fg_color="transparent",
-                text_color=("gray10", "gray90"),
-                hover_color=("gray70", "gray30"),
-                anchor="w",  
-                command=lambda k=key: self.show_frame(k)
-            )
-            btn.grid(row=idx + 1, column=0, padx=10, pady=5, sticky="ew")
-            self.nav_buttons[key] = btn
-
-     
-        appearance_row = len(SIDEBAR_TOOLS) + 3
-        self.appearance_switch = ctk.CTkSegmentedButton(
-            self.sidebar, values=["Light", "Dark"],
-            command=self._on_appearance_change
-        )
-        self.appearance_switch.set("Dark")
-        self.appearance_switch.grid(row=appearance_row, column=0, padx=15, pady=20, sticky="ew")
-
-        
         self.main_area = ctk.CTkFrame(self, corner_radius=0, fg_color=("gray95", "gray10"))
-        self.main_area.grid(row=0, column=1, sticky="nsew")
+        self.main_area.grid(row=0, column=0, sticky="nsew")
         self.main_area.grid_columnconfigure(0, weight=1)
         self.main_area.grid_rowconfigure(0, weight=1)
 
-       
         self.frames = {}
 
         frame_classes = {
@@ -1944,23 +1966,19 @@ class App(ctk.CTk):
             frame.grid(row=0, column=0, sticky="nsew")
             self.frames[key] = frame
 
-        # Show the first tool by default
-        self.show_frame("word_to_pdf")
+        # Load home frame cleanly as our primary entry screen layout
+        home = HomeDashboardFrame(self.main_area, self)
+        home.grid(row=0, column=0, sticky="nsew")
+        self.frames["home"] = home
+        self.show_frame("home")
 
     
     def show_frame(self, key):
-        """Raise the requested tool frame and highlight its nav button."""
+        """Raise the requested tool frame natively within the main window stack."""
         frame = self.frames.get(key)
         if frame is None:
             return
         frame.tkraise()
-
-        # Highlight active sidebar button
-        for k, btn in self.nav_buttons.items():
-            if k == key:
-                btn.configure(fg_color=("gray75", "gray30"))
-            else:
-                btn.configure(fg_color="transparent")
 
     def _on_appearance_change(self, value):
         ctk.set_appearance_mode(value.lower())
