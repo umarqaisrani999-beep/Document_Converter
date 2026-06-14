@@ -57,5 +57,11 @@ class ErrorDialog(ctk.CTkToplevel):
 def show_error(master, title, message):
     ErrorDialog(master, title=title, message=message, kind="error")
 
+def show_warning(master, title, message):
+    ErrorDialog(master, title=title, message=message, kind="warning")
+
 def show_success(master, title, message):
     ErrorDialog(master, title=title, message=message, kind="success")
+
+def show_info(master, title, message):
+    ErrorDialog(master, title=title, message=message, kind="info")

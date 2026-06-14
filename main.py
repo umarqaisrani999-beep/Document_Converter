@@ -27,7 +27,7 @@ SIDEBAR_TOOLS = [
     ("📋 Word → PPTX", "word_to_pptx"),
     ("📑 PPTX → Word", "pptx_to_word"),
     ("🔍 OCR: Image → Text", "ocr_image_text"),
-    ("✨ Text Enhancer", "text_enhancer"),
+    ("✨ Text Editor", "text_editor"),
     ("🗜️ File Compressor", "file_compressor"),
     ("🖼️ Image Compressor", "image_compressor"),
 ]
@@ -1198,22 +1198,8 @@ class OcrImageTextFrame(BaseToolFrame):
         self.status_label.configure(text=msg)
 
 
-class TextEnhancerFrame(BaseToolFrame):
-    """
-    Feature 8 — Text Visualization Enhancer.
-    A rich, pure-GUI text editor / previewer with:
-    • Load from .txt file or paste directly
-    • Live font-size slider
-    • Font-family switcher
-    • Bold / Italic / Underline toggle buttons (applied via tk Text tags)
-    • Foreground & highlight (background) colour pickers
-    • Line-spacing control
-    • Find & highlight keyword tool
-    • Word/character counter
-    • Save formatted text as .txt
-    No heavy external libraries needed — uses tkinter's built-in Text widget
-    capabilities accessed through the CTkTextbox internals.
-    """
+class TextEditorFrame(BaseToolFrame):
+   
 
     _FONTS = [
         "Helvetica", "Arial", "Courier New", "Times New Roman",
@@ -1650,7 +1636,7 @@ class App(ctk.CTk):
             "word_to_pptx": WordToPptxFrame,
             "pptx_to_word": PptxToWordFrame,
             "ocr_image_text": OcrImageTextFrame,
-            "text_enhancer": TextEnhancerFrame,
+            "text_editor": TextEditorFrame,
             "file_compressor": FileCompressorFrame,
             "image_compressor": ImageCompressorFrame,
         }
