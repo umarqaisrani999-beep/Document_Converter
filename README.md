@@ -53,37 +53,37 @@ No internet connection is required. All processing happens **100% locally** on y
 ## Screenshots
 
 ### 🏠 Home Dashboard
-![Home Dashboard](Screenshots/Screenshot%20from%202026-06-14%2019-39-04.png)
+![Home Dashboard](Screenshots/01_dashboard.png)
 
 ### 📄 Word → PDF Converter
-![Word to PDF](Screenshots/Screenshot%20from%202026-06-14%2019-39-10.png)
+![Word to PDF](Screenshots/02_word_to_pdf.png)
 
 ### 📝 PDF → Word Converter
-![PDF to Word](Screenshots/Screenshot%20from%202026-06-14%2019-39-16.png)
+![PDF to Word](Screenshots/03_pdf_to_word.png)
 
 ### 📊 PDF → PPTX Converter
-![PDF to PPTX](Screenshots/Screenshot%20from%202026-06-14%2019-39-24.png)
+![PDF to PPTX](Screenshots/04_pdf_to_pptx.png)
 
 ### 📊 PPTX → PDF Converter
-![PPTX to PDF](Screenshots/Screenshot%20from%202026-06-14%2019-39-29.png)
+![PPTX to PDF](Screenshots/05_pptx_to_pdf.png)
 
 ### 📋 Word → PPTX Converter
-![Word to PPTX](Screenshots/Screenshot%20from%202026-06-14%2019-39-35.png)
+![Word to PPTX](Screenshots/06_word_to_pptx.png)
 
 ### 📑 PPTX → Word Converter
-![PPTX to Word](Screenshots/Screenshot%20from%202026-06-14%2019-39-42.png)
+![PPTX to Word](Screenshots/07_pptx_to_word.png)
 
 ### 🔍 OCR: Image → Text Extractor
-![OCR Tool](Screenshots/Screenshot%20from%202026-06-14%2019-39-50.png)
+![OCR Tool](Screenshots/08_ocr.png)
 
 ### ✨ Text Editor
-![Text Editor](Screenshots/Screenshot%20from%202026-06-14%2019-40-04.png)
+![Text Editor](Screenshots/09_text_editor.png)
 
 ### 🗜️ File Compressor
-![File Compressor](Screenshots/Screenshot%20from%202026-06-14%2019-40-11.png)
+![File Compressor](Screenshots/10_file_compressor.png)
 
 ### 🖼️ Image Compressor
-![Image Compressor](Screenshots/Screenshot%20from%202026-06-14%2019-40-18.png)
+![Image Compressor](Screenshots/11_image_compressor.png)
 
 ---
 
