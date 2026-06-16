@@ -8,7 +8,7 @@
 
 - [About the Project](#about-the-project)
 - [Features](#features)
-- [Screenshots](#screenshots)
+- [Screenshots](#Screenshots)
 - [Tools & Technologies](#tools--technologies)
 - [Setup & Installation](#setup--installation)
 - [Running the App](#running-the-app)
@@ -53,37 +53,37 @@ No internet connection is required. All processing happens **100% locally** on y
 ## Screenshots
 
 ### 🏠 Home Dashboard
-![Home Dashboard](screenshots/01_dashboard.png)
+![Home Dashboard](Screenshots/Screenshot%20from%202026-06-14%2019-39-04.png)
 
 ### 📄 Word → PDF Converter
-![Word to PDF](screenshots/02_word_to_pdf.png)
+![Word to PDF](Screenshots/Screenshot%20from%202026-06-14%2019-39-10.png)
 
 ### 📝 PDF → Word Converter
-![PDF to Word](screenshots/03_pdf_to_word.png)
+![PDF to Word](Screenshots/Screenshot%20from%202026-06-14%2019-39-16.png)
 
 ### 📊 PDF → PPTX Converter
-![PDF to PPTX](screenshots/04_pdf_to_pptx.png)
+![PDF to PPTX](Screenshots/Screenshot%20from%202026-06-14%2019-39-24.png)
 
 ### 📊 PPTX → PDF Converter
-![PPTX to PDF](screenshots/05_pptx_to_pdf.png)
+![PPTX to PDF](Screenshots/Screenshot%20from%202026-06-14%2019-39-29.png)
 
 ### 📋 Word → PPTX Converter
-![Word to PPTX](screenshots/06_word_to_pptx.png)
+![Word to PPTX](Screenshots/Screenshot%20from%202026-06-14%2019-39-35.png)
 
 ### 📑 PPTX → Word Converter
-![PPTX to Word](screenshots/07_pptx_to_word.png)
+![PPTX to Word](Screenshots/Screenshot%20from%202026-06-14%2019-39-42.png)
 
 ### 🔍 OCR: Image → Text Extractor
-![OCR Tool](screenshots/08_ocr.png)
+![OCR Tool](Screenshots/Screenshot%20from%202026-06-14%2019-39-50.png)
 
 ### ✨ Text Editor
-![Text Editor](screenshots/09_text_editor.png)
+![Text Editor](Screenshots/Screenshot%20from%202026-06-14%2019-39-57.png)
 
 ### 🗜️ File Compressor
-![File Compressor](screenshots/10_file_compressor.png)
+![File Compressor](Screenshots/Screenshot%20from%202026-06-14%2019-40-04.png)
 
 ### 🖼️ Image Compressor
-![Image Compressor](screenshots/11_image_compressor.png)
+![Image Compressor](Screenshots/Screenshot%20from%202026-06-14%2019-40-11.png)
 
 ---
 
