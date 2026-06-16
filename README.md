@@ -53,37 +53,37 @@ No internet connection is required. All processing happens **100% locally** on y
 ## Screenshots
 
 ### 🏠 Home Dashboard
-![Home Dashboard](Screenshots/Screenshot%20from%202026-06-14%2019-39-04.png)
+![Home Dashboard](Screenshots/Screenshot%from%2026-06-14%19-39-04.png)
 
 ### 📄 Word → PDF Converter
-![Word to PDF](Screenshots/Screenshot%20from%202026-06-14%2019-39-10.png)
+![Word to PDF](Screenshots/Screenshot%from%2026-06-14%19-39-10.png)
 
 ### 📝 PDF → Word Converter
-![PDF to Word](Screenshots/Screenshot%20from%202026-06-14%2019-39-16.png)
+![PDF to Word](Screenshots/Screenshot%from%2026-06-14%19-39-16.png)
 
 ### 📊 PDF → PPTX Converter
-![PDF to PPTX](Screenshots/Screenshot%20from%202026-06-14%2019-39-24.png)
+![PDF to PPTX](Screenshots/Screenshot%from%2026-06-14%19-39-24.png)
 
 ### 📊 PPTX → PDF Converter
-![PPTX to PDF](Screenshots/Screenshot%20from%202026-06-14%2019-39-29.png)
+![PPTX to PDF](Screenshots/Screenshot%from%2026-06-14%19-39-29.png)
 
 ### 📋 Word → PPTX Converter
-![Word to PPTX](Screenshots/Screenshot%20from%202026-06-14%2019-39-35.png)
+![Word to PPTX](Screenshots/Screenshot%from%2026-06-14%19-39-35.png)
 
 ### 📑 PPTX → Word Converter
-![PPTX to Word](Screenshots/Screenshot%20from%202026-06-14%2019-39-42.png)
+![PPTX to Word](Screenshots/Screenshot%from%2026-06-14%19-39-42.png)
 
 ### 🔍 OCR: Image → Text Extractor
-![OCR Tool](Screenshots/Screenshot%20from%202026-06-14%2019-39-50.png)
+![OCR Tool](Screenshots/Screenshot%from%2026-06-14%19-39-50.png)
 
 ### ✨ Text Editor
-![Text Editor](Screenshots/Screenshot%20from%202026-06-14%2019-40-04.png)
+![Text Editor](Screenshots/Screenshot%from%2026-06-14%19-40-04.png)
 
 ### 🗜️ File Compressor
-![File Compressor](Screenshots/Screenshot%20from%202026-06-14%2019-40-11.png)
+![File Compressor](Screenshots/Screenshot%from%2026-06-14%19-40-11.png)
 
 ### 🖼️ Image Compressor
-![Image Compressor](Screenshots/Screenshot%20from%202026-06-14%2019-40-18.png)
+![Image Compressor](Screenshots/Screenshot%from%2026-06-14%19-40-18.png)
 
 ---
 
