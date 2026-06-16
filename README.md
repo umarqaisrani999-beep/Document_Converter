@@ -253,31 +253,6 @@ All tool functions accept an optional `progress_cb(pct: int, msg: str)` callback
 | **[Musab Awais]** | `file_compressor.py`, `image_compressor.py`, `FileCompressorFrame`, `ImageCompressorFrame` |
 
 
-
-### Pull Requests
-
-| PR | Title | Author |
-|----|-------|--------|
-| [#1](https://github.com/your-username/docuverse/pull/1) | Initial project structure and base GUI | Member 1 |
-| [#2](https://github.com/your-username/docuverse/pull/2) | Add Word ↔ PDF conversion | Member 1 |
-| [#3](https://github.com/your-username/docuverse/pull/3) | Add PDF → PPTX and PPTX → Word tools | Member 2 |
-| [#4](https://github.com/your-username/docuverse/pull/4) | OCR module with easyocr + pytesseract | Member 3 |
-| [#5](https://github.com/your-username/docuverse/pull/5) | Rich Text Editor with font and colour controls | Member 4 |
-| [#6](https://github.com/your-username/docuverse/pull/6) | File and Image Compressor tools | Member 5 |
-| [#7](https://github.com/your-username/docuverse/pull/7) | Home Dashboard + popup modal system | Member 6 |
-
-### Issues
-
-| Issue | Title | Status |
-|-------|-------|--------|
-| [#1](https://github.com/your-username/docuverse/issues/1) | Setup project repository and agree on architecture | ✅ Closed |
-| [#2](https://github.com/your-username/docuverse/issues/2) | Word→PDF fails on Linux without LibreOffice | ✅ Closed |
-| [#3](https://github.com/your-username/docuverse/issues/3) | OCR language selector not updating engine | ✅ Closed |
-| [#4](https://github.com/your-username/docuverse/issues/4) | Progress bar not resetting after failed conversion | ✅ Closed |
-| [#5](https://github.com/your-username/docuverse/issues/5) | Add Home Dashboard screen with card grid | ✅ Closed |
-
----
-
 ## License
 
 This project was developed as part of an **Open Source Software Development** course project at **UMT (University of Management and Technology)**, Semester 4.
