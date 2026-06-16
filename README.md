@@ -179,6 +179,11 @@ brew install wkhtmltopdf
 ## Running the App
 
 bash
+sudo apt-get install python3-tk
+brew install python-tk
+python3 main.py
+
+bash
 python main.py
 
 
@@ -241,20 +246,13 @@ All tool functions accept an optional `progress_cb(pct: int, msg: str)` callback
 
 | Team Member | Role & Contributions |
 |-------------|---------------------|
-| **[Member 1]** | Project lead, `main.py` GUI architecture, `WordToPdfFrame`, `PdfToWordFrame`, `PptxToPdfFrame` |
-| **[Member 2]** | `word_pptx.py`, `pptx_word.py`, `WordToPptxFrame`, `PptxToWordFrame` tool modules |
-| **[Member 3]** | `ocr.py` OCR engine integration, `OcrImageTextFrame`, multi-language support |
-| **[Member 4]** | `TextEditorFrame` rich text editor, find & highlight, font/colour controls |
-| **[Member 5]** | `file_compressor.py`, `image_compressor.py`, `FileCompressorFrame`, `ImageCompressorFrame` |
-| **[Member 6]** | `HomeDashboardFrame` design, popup modal system, sidebar navigation, UI polish |
+| **[Umar Qaisrani]** | Project lead, `main.py` GUI architecture, `WordToPdfFrame`, `PdfToWordFrame`, `PptxToPdfFrame` |
+| **[Syed Zawar]** | `word_pptx.py`, `pptx_word.py`, `WordToPptxFrame`, `PptxToWordFrame` tool modules |
+| **[Subhan Ali]** | `ocr.py` OCR engine integration, `OcrImageTextFrame`, multi-language support |
+| **[Hurraira]** | `TextEditorFrame` rich text editor, find & highlight, font/colour controls |
+| **[Musab Awais]** | `file_compressor.py`, `image_compressor.py`, `FileCompressorFrame`, `ImageCompressorFrame` |
 
-> ℹ️ Replace the placeholders above with your actual team members' names and GitHub usernames.
 
----
-
-## Major PRs & Issues
-
-> ℹ️ Replace the links below with your actual GitHub PR and issue URLs.
 
 ### Pull Requests
 
@@ -284,6 +282,4 @@ All tool functions accept an optional `progress_cb(pct: int, msg: str)` callback
 
 This project was developed as part of an **Open Source Software Development** course project at **UMT (University of Management and Technology)**, Semester 4.
 
----
 
-<p align="center">Made with ❤️ by the DocuVerse Team · UMT OSSID Project 2026</p>
