@@ -8,7 +8,7 @@
 
 - [About the Project](#about-the-project)
 - [Features](#features)
-- [Screenshots](#Screenshots)
+- [OSSID_project](#OSSID_project)
 - [Tools & Technologies](#tools--technologies)
 - [Setup & Installation](#setup--installation)
 - [Running the App](#running-the-app)
@@ -50,40 +50,40 @@ No internet connection is required. All processing happens **100% locally** on y
 
 ---
 
-## Screenshots
+## OSSID_project
 
 ### 🏠 Home Dashboard
-![Home Dashboard](Screenshots/Screenshot%20from%202026-06-14%2019-39-04.png)
+![Home Dashboard](files/Screenshots/Screenshot%from%2026-06-14%19-39-04.png)
 
 ### 📄 Word → PDF Converter
-![Word to PDF](Screenshots/Screenshot%20from%202026-06-14%2019-39-10.png)
+![Word to PDF](OSSID_project/files/Screenshots/Screenshot%from%2026-06-14%19-39-10.png)
 
 ### 📝 PDF → Word Converter
-![PDF to Word](Screenshots/Screenshot%20from%202026-06-14%2019-39-16.png)
+![PDF to Word](OSSID_project/files/Screenshots/Screenshot%from%2026-06-14%19-39-16.png)
 
 ### 📊 PDF → PPTX Converter
-![PDF to PPTX](Screenshots/Screenshot%20from%202026-06-14%2019-39-24.png)
+![PDF to PPTX](OSSID_project/files/Screenshots/Screenshot%from%2026-06-14%19-39-24.png)
 
 ### 📊 PPTX → PDF Converter
-![PPTX to PDF](Screenshots/Screenshot%20from%202026-06-14%2019-39-29.png)
+![PPTX to PDF](OSSID_project/files/Screenshots/Screenshot%from%2026-06-14%19-39-29.png)
 
 ### 📋 Word → PPTX Converter
-![Word to PPTX](Screenshots/Screenshot%20from%202026-06-14%2019-39-35.png)
+![Word to PPTX](OSSID_project/files/Screenshots/Screenshot%from%2026-06-14%19-39-35.png)
 
 ### 📑 PPTX → Word Converter
-![PPTX to Word](Screenshots/Screenshot%20from%202026-06-14%2019-39-42.png)
+![PPTX to Word](OSSID_project/files/Screenshots/Screenshot%from%2026-06-14%19-39-42.png)
 
 ### 🔍 OCR: Image → Text Extractor
-![OCR Tool](Screenshots/Screenshot%20from%202026-06-14%2019-39-50.png)
+![OCR Tool](OSSID_project/files/Screenshots/Screenshot%from%2026-06-14%19-39-50.png)
 
 ### ✨ Text Editor
-![Text Editor](Screenshots/Screenshot%20from%202026-06-14%2019-39-57.png)
+![Text Editor](OSSID_project/files/Screenshots/Screenshot%from%2026-06-14%19-39-57.png)
 
 ### 🗜️ File Compressor
-![File Compressor](Screenshots/Screenshot%20from%202026-06-14%2019-40-04.png)
+![File Compressor](OSSID_project/files/Screenshots/Screenshot%from%2026-06-14%19-40-04.png)
 
 ### 🖼️ Image Compressor
-![Image Compressor](Screenshots/Screenshot%20from%202026-06-14%2019-40-11.png)
+![Image Compressor](OSSID_project/files/Screenshots/Screenshot%from%2026-06-14%19-40-11.png)
 
 ---
 
