@@ -9,10 +9,15 @@ def compress_image(input_path: str, output_path: str, quality: int = 70,
     quality: 1-95 (lower = smaller file, more loss)
     max_dimension: if set, scales image so longest side <= this value
     """
-    if progress_cb:
-        progress_cb(10, "Opening image...")
-
-    img = Image.open(input_path)
+   if not os . path . isfile ( input_path ) : 
+    raise FileNotFoundError ( f"Input image not found: { input_path } " ) 
+if not isinstance ( quality , int ) or not ( 1 <= quality <= 95 ) : 
+    raise ValueError ( f"Quality must be an integer between 1 and 95 (got { quality } )." ) 
+if max_dimension is not None and max_dimension <= 0 : 
+    raise ValueError ( f"max_dimension must be a positive number (got { max_dimension } )." ) 
+if progress_cb : 
+    progress_cb ( 10 , "Opening image..." ) 
+img = Image . open ( input_path )
 
     # Convert RGBA/P to RGB for JPEG compatibility
     if img.mode in ("RGBA", "P"):
